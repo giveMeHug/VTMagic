@@ -152,6 +152,16 @@
     }
     return [_frameList[pageIndex] CGRectValue];
 }
+#pragma mark - 解决手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"UILayoutContainerView")]) {
+        // 判断 POP 手势的状态是 begin 还是 fail，同时判断 scrollView 的 ContentOffset.x 是不是在最左边
+        if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan && self.contentOffset.x == 0) {
+            return YES;
+        }
+    }
+    return NO;
+}
 
 #pragma mark - 根据索引获取页面控制器
 - (UIViewController *)viewControllerAtPage:(NSUInteger)pageIndex {
